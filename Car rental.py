@@ -1,13 +1,30 @@
 import mysql.connector
 from tabulate import tabulate
+import getpass
 import datetime
 
 #connection with MySQL
+login_count = 0
 
-passwd_client = input('Enter the password for the MYSQL COMMAND LINE CLIENT: ')
+for i in range(1, 4):
+    try:
+        print("\n")
+        passwd = getpass.getpass("Enter the MySQL Client Password: ")
+        conobj = mysql.connector.connect(host = 'localhost', user = 'root', password = passwd)
 
-conobj=mysql.connector.connect(host="localhost",user="root",passwd= passwd_client)
+        if conobj.is_connected:
+            print("Connected Successfully")
+            break
 
+    except mysql.connector.errors.ProgrammingError:
+        login_count = login_count + 1
+        time.sleep(10)
+        print("\nConnection failed, incorrect password entered\n")
+        if login_count > 3:
+            print("Exiting program due to Security Reasons")
+            sys.exit(1)
+            break
+         
 #cursor object/instance
 
 cur=conobj.cursor()
