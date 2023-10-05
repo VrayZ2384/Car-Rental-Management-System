@@ -1,10 +1,11 @@
 import mysql.connector
+import getpass
 from tabulate import tabulate
 import datetime
 
 #connection with MySQL
 
-passwd_client = input('Enter the password for the MYSQL COMMAND LINE CLIENT: ')
+passwd_client = getpass.getpass('Enter the password for the MYSQL COMMAND LINE CLIENT: ')
 
 conobj=mysql.connector.connect(host="localhost",user="root",passwd= passwd_client)
 
