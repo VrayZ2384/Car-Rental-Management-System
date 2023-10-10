@@ -1,23 +1,52 @@
 import mysql.connector
 from tabulate import tabulate
 import datetime
+import time
+import getpass
+import sys
 
-#connection with MySQL
+login_count = 0
 
-passwd_client = input('Enter the password for the MYSQL COMMAND LINE CLIENT: ')
+for i in range(0, 3):
+    try:
+        print("\n")
+        passwd = getpass.getpass("Enter the MySQL Client Password: ")
+        conobj = mysql.connector.connect(host = 'localhost', user = 'root', password = passwd)
 
-conobj=mysql.connector.connect(host="localhost",user="root",passwd= passwd_client)
+        if conobj.is_connected:
+            print("Connected Successfully")
+            break
 
-#cursor object/instance
+        else:
+            print("Password Entered is Incorrect\n")
+            login_count = login_count + 1
+        
+            if login_count > 3:
+                print("\nPassword Entered Incorrectly 3 times")
+                time.sleep(5)
+                print('\nExiting Program')            
+                sys.exit(1)
+                break
 
-cur=conobj.cursor()
+        print(login_count)
 
- 
+    except mysql.connector.errors.ProgrammingError:
+        print("\nConnection failed, incorrect password entered\n")
+        if login_count > 3:
+            sys.exit(1)
+            break
+
+try:
+    cur = conobj.cursor()
+
+except NameError:
+    print("This program requires Authorisation / DataBase Admin Password")
+
 #CHECKING FOR THE EXISTENCE FOR THE DATABASE IN THE MYSQL COMMAND LINE CLIENT
  
 def checkdatab():
  
-    #To check the existance of the database "car_rental"
+    #To check the existence of the database "car_rental"
     cur.execute('show databases')
     databases_in_system = cur.fetchall()
     if ('car_rental',) in databases_in_system:
